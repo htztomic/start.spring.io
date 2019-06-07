@@ -44,4 +44,9 @@ public class ProjectDescriptionCustomizerConfiguration {
 		return new GradleDslProjectDescriptionCustomizer();
 	}
 
+	@Bean
+	public MavenCoordinatesProjectDescriptionCustomizer mavenCoordinatesProjectDescriptionCustomizer() {
+		return new MavenCoordinatesProjectDescriptionCustomizer();
+	}
+
 }
