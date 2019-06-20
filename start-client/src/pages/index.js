@@ -9,8 +9,10 @@ import { ToastContainer, toast } from 'react-toastify'
 import { graphql } from 'gatsby'
 
 import META_EXTEND from '../data/meta-extend.json'
+import TREE from '../components/common/explore/Dummy'
 import { CheckboxList } from '../components/common/checkbox-list'
-import { Footer, Header, Layout, Loader } from '../components/common/layout'
+import { ExploreModal } from '../components/common/explore'
+import { Footer, Header, Layout } from '../components/common/layout'
 import {
   IconChevronRight,
   IconList,
@@ -33,15 +35,21 @@ class IndexPage extends React.Component {
       error: false,
       symb: 'alt',
       groups: {},
+      exploreModal: false,
     }
 
     this.keyMap = {
       SUBMIT: ['command+enter', 'ctrl+enter'],
+      EXPLORE: ['command+space', 'ctrl+space'],
     }
     const submit = this.onSubmit
+    const explore = this.onExplore
     this.handlers = {
       SUBMIT: event => {
         submit(event)
+      },
+      EXPLORE: event => {
+        explore()
       },
     }
   }
@@ -296,6 +304,19 @@ class IndexPage extends React.Component {
       })
   }
 
+  onExplore = () => {
+    const pomXml = TREE.find(item => item.path === '/pom.xml')
+    this.setState({ exploreModal: true, tree: TREE, file: pomXml })
+  }
+
+  onSelectedFile = item => {
+    this.setState({ file: item })
+  }
+
+  onExploreClose = () => {
+    this.setState({ exploreModal: false, tree: null })
+  }
+
   render() {
     if (get(this.state, 'error')) {
       return (
@@ -313,7 +334,7 @@ class IndexPage extends React.Component {
     const selected = get(this.getValidDependencies(), 'length', 0)
     return (
       <Layout>
-        <GlobalHotKeys keyMap={this.keyMap} handlers={this.handlers} />
+        <GlobalHotKeys keyMap={this.keyMap} handlers={this.handlers} global />
         <Meta />
         <ToastContainer position='top-center' hideProgressBar />
         <form onSubmit={this.onSubmit} autoComplete='off'>
@@ -627,21 +648,42 @@ class IndexPage extends React.Component {
               <div className='right nopadding'>
                 <div className='submit'>
                   {get(this.state, 'complete') ? (
-                    <button
-                      className='button primary'
-                      type='submit'
-                      id='generate-project'
-                    >
-                      Generate the project - {this.state.symb} + ⏎
-                    </button>
+                    <>
+                      <button
+                        className='button primary'
+                        type='submit'
+                        id='generate-project'
+                      >
+                        Generate the project - {this.state.symb} + ⏎
+                      </button>
+                      <button
+                        className='button'
+                        type='button'
+                        onClick={this.onExplore}
+                        id='explore-project'
+                      >
+                        Explore the project - {this.state.symb} + Space
+                      </button>
+                    </>
                   ) : (
-                    <Placeholder type='button' width='267px' />
+                    <>
+                      <Placeholder type='button' width='267px' />
+                      <Placeholder type='button' width='281px' />
+                    </>
                   )}
                 </div>
               </div>
             </div>
           </div>
         </form>
+
+        <ExploreModal
+          open={this.state.exploreModal}
+          onClose={this.onExploreClose}
+          onSelected={this.onSelectedFile}
+          tree={get(this.state, 'tree')}
+          selected={get(this.state, 'file')}
+        />
       </Layout>
     )
   }

@@ -7,9 +7,12 @@ export { default as IconCaretDown } from './IconCaretDown'
 export { default as IconList } from './IconList'
 export { default as IconSearch } from './IconSearch'
 export { default as IconCheck } from './IconCheck'
+export { default as IconDownload } from './IconDownload'
 export {
   IconChevronLeft,
   IconChevronRight,
   IconChevronUp,
   IconChevronDown,
 } from './IconChevron'
+
+export { IconFolder, IconFile } from './IconFileTree'

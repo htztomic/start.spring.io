@@ -1,0 +1,300 @@
+.modal-explorer {
+  width: 70%;
+  max-width: 1400px;
+  top: 40px;
+  height: 80%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  padding: 0;
+  > div {
+    height: 100%;
+  }
+  .colset {
+    padding: 0;
+    height: 100%;
+    .right,
+    .left {
+      max-width: none;
+      padding: 0;
+      text-align: left;
+      font-weight: normal;
+      height: 100%;
+      position: relative;
+    }
+    .left {
+      background: $spring-gray-color;
+      border-right: 1px solid $spring-border-color;
+    }
+    .head {
+      border-bottom: 1px solid $spring-border-color;
+      line-height: 40px;
+      padding: 0 $spring-8points * 2;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      .close {
+        display: block;
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 6px 12px;
+        cursor: pointer;
+        svg {
+          width: 14px;
+        }
+      }
+      .actions {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 200px;
+        text-align: center;
+        margin-left: -100px;
+        color: rgba(0, 0, 0, 0.3);
+      }
+    }
+    .foot {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      line-height: 40px;
+      border-top: 1px solid $spring-border-color;
+      .action {
+        position: relative;
+        padding-left: 25px;
+        padding-right: 20px;
+        margin-left: 10px;
+        .icon-download {
+          position: absolute;
+          top: 14px;
+          left: 5px;
+        }
+      }
+    }
+    .action {
+      display: inline-block;
+      cursor: pointer;
+      color: #097dff;
+      padding: 0 $spring-8points;
+      text-decoration: underline;
+      svg {
+      }
+      &:hover {
+        text-decoration: none;
+      }
+    }
+    .content {
+      position: absolute;
+      top: 41px;
+      bottom: 40px;
+      right: 0;
+      left: 0;
+      overflow: auto;
+    }
+    .right {
+      .head {
+        strong {
+          position: relative;
+          padding-left: 20px;
+          svg {
+            position: absolute;
+            top: 3px;
+            left: 0;
+            width: 13px;
+          }
+        }
+      }
+      .content {
+        bottom: 0;
+        &::-webkit-scrollbar {
+          height: 6px;
+          width: 6px;
+          background: transparent;
+        }
+        &::-webkit-scrollbar-thumb {
+          background: rgba(black, 0.3);
+        }
+      }
+    }
+  }
+  .icon-download {
+    width: 16px;
+  }
+}
+
+.overlay {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.explorer-ul {
+  &,
+  ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    font-size: 14px;
+    line-height: 30px;
+  }
+  span {
+    display: block;
+  }
+  .file,
+  .folder {
+    position: relative;
+    display: block;
+    cursor: pointer;
+    &:hover {
+      background: rgba(0, 0, 0, 0.03);
+    }
+    .text {
+      position: relative;
+      padding-left: 44px;
+      margin: 0 8px;
+    }
+    .icon {
+      display: block;
+      position: absolute;
+      top: 4px;
+      left: 18px;
+      height: 20px;
+      width: 20px;
+    }
+    .icon-caret-down {
+      display: block;
+      position: absolute;
+      z-index: 1000;
+      top: 6px;
+      left: 0;
+      height: 16px;
+      width: 16px;
+    }
+    &.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      &:hover {
+        background: transparent;
+      }
+    }
+    &.selected {
+      background: rgba(0, 0, 0, 0.05);
+      font-weight: bold;
+    }
+  }
+
+  .folder-hide {
+    > ul {
+      display: none;
+    }
+    > .folder > .text > .icon-caret-down {
+      transform: rotate(-90deg);
+    }
+  }
+
+  $range: 12px;
+
+  .level-0 {
+    .text {
+      margin-left: 0 * $range + 6px;
+    }
+  }
+  .level-1 {
+    .text {
+      margin-left: 1 * $range + 6px;
+    }
+  }
+  .level-2 {
+    .text {
+      margin-left: 2 * $range + 6px;
+    }
+  }
+  .level-3 {
+    .text {
+      margin-left: 3 * $range + 6px;
+    }
+  }
+  .level-4 {
+    .text {
+      margin-left: 4 * $range + 6px;
+    }
+  }
+  .level-5 {
+    .text {
+      margin-left: 5 * $range + 6px;
+    }
+  }
+  .level-6 {
+    .text {
+      margin-left: 6 * $range + 6px;
+    }
+  }
+  .level-7 {
+    .text {
+      margin-left: 7 * $range + 6px;
+    }
+  }
+  .icon-folder {
+    width: 20px;
+  }
+  .icon-file {
+    position: absolute;
+    top: 3px;
+    left: 4px;
+    width: 13px;
+  }
+}
+
+pre.prism-code {
+  margin: 0;
+  padding: 0;
+  line-height: 24px;
+  font-size: 13px;
+  font-family: Monaco, Menlo, Consolas, 'courier new', monospace;
+  span.number {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    padding-right: 10px;
+    text-align: right;
+    margin-right: 10px;
+    font-size: 11px;
+    height: 25px;
+    &:before {
+      display: block;
+      content: attr(data-value);
+      color: rgba(0, 0, 0, 0.2);
+      position: absolute;
+      width: 20px;
+      left: 0;
+      top: 9px;
+      background-color: $spring-gray-color;
+      padding-right: 10px;
+      height: 25px;
+    }
+  }
+  .token-line {
+    height: 25px;
+  }
+  &.line-3 {
+    width: 28px;
+    span.number {
+      width: 28px;
+      &:before {
+        width: 28px;
+      }
+    }
+    &:before {
+      width: 38px;
+    }
+  }
+
+  &:before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    display: block;
+    width: 30px;
+    content: '';
+    background-color: $spring-gray-color;
+  }
+}
