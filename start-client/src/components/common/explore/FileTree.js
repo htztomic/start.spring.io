@@ -16,7 +16,7 @@ class FileTree extends React.Component {
   }
 
   treeToArray = tree => {
-    const recurcive = (tree, acc) => {
+    const recursive = (tree, acc) => {
       tree.forEach(item => {
         if (item.type === 'folder') {
           acc.push({
@@ -25,13 +25,13 @@ class FileTree extends React.Component {
             hidden: get(item, 'hidden', false),
           })
           if (get(item, 'children')) {
-            recurcive(item.children, acc)
+            recursive(item.children, acc)
           }
         }
       })
       return acc
     }
-    return recurcive(tree, [])
+    return recursive(tree, [])
   }
 
   toggleFolder = item => {
@@ -65,7 +65,7 @@ class FileTree extends React.Component {
     return false
   }
 
-  renderItem = (item, deph = 0) => {
+  renderItem = (item, depth = 0) => {
     if (item.type === 'folder') {
       const f = get(this.state, 'folders').find(
         folder => folder.path === item.path
@@ -78,7 +78,7 @@ class FileTree extends React.Component {
         >
           <span
             key={`s1${item.path}`}
-            className={`folder level-${deph}`}
+            className={`folder level-${depth}`}
             onClick={() => this.toggleFolder(item)}
           >
             <span key={`s2${item.path}`} className='text'>
@@ -91,7 +91,7 @@ class FileTree extends React.Component {
           </span>
           {get(item, 'children') && (
             <ul className='ul' key={`ul${item.path}`}>
-              {item.children.map(it => this.renderItem(it, deph + 1))}
+              {item.children.map(it => this.renderItem(it, depth + 1))}
             </ul>
           )}
         </li>
@@ -104,7 +104,7 @@ class FileTree extends React.Component {
         <li key={`li${item.path}`} className='li-file'>
           <span
             key={`s1${item.path}`}
-            className={`file level-${deph} ${
+            className={`file level-${depth} ${
               isItemDisabled ? 'disabled' : ''
             } ${selected ? 'selected' : ''}`}
           >

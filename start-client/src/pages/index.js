@@ -1,4 +1,5 @@
 import FileSaver from 'file-saver'
+import JSZip from 'jszip'
 import React from 'react'
 import get from 'lodash.get'
 import queryString from 'query-string'
@@ -260,8 +261,7 @@ class IndexPage extends React.Component {
     this.setState({ groups: val })
   }
 
-  onSubmit = event => {
-    event.preventDefault()
+  retrieveBlob = async () => {
     const { project, language, boot, meta } = this.state
     const apiZip = this.props.data.site.edges[0].node.siteMetadata.apiZip
     const url = `${apiZip}`
@@ -281,32 +281,107 @@ class IndexPage extends React.Component {
     const paramsDependencies = this.getValidDependencies()
       .map(dep => `&style=${dep.id}`)
       .join('')
-    fetch(`${url}?${params}${paramsDependencies}`, { method: 'GET' })
-      .then(
-        function(response) {
-          if (response.status === 200) {
-            return response.blob()
-          }
-          return null
-        },
-        function(error) {
-          return null
+    return await fetch(`${url}?${params}${paramsDependencies}`, {
+      method: 'GET',
+    }).then(
+      function(response) {
+        if (response.status === 200) {
+          return response.blob()
         }
-      )
-      .then(function(blob) {
-        if (!blob) {
-          toast.error('The server API is not available.')
-          return
-        }
-        const fileName = `${meta.artifact}.zip`
-        FileSaver.saveAs(blob, fileName)
-        toast.success('Your project has been generated with success.')
-      })
+        return null
+      },
+      function(error) {
+        return null
+      }
+    )
+  }
+
+  onSubmit = event => {
+    event.preventDefault()
+    const { meta } = this.state
+    let promise = this.retrieveBlob()
+    promise.then(function(blob) {
+      const fileName = `${meta.artifact}.zip`
+      FileSaver.saveAs(blob, fileName)
+      toast.success('Your project has been generated with success.')
+    })
   }
 
   onExplore = () => {
-    const pomXml = TREE.find(item => item.path === '/pom.xml')
-    this.setState({ exploreModal: true, tree: TREE, file: pomXml })
+    let promise = this.retrieveBlob()
+    let { meta } = this.state
+    promise.then(blob => {
+      if (!blob) {
+        toast.error('The server API is not available.')
+        return
+      }
+      let zip = new JSZip()
+      zip.loadAsync(blob).then(value => {
+        let files = value.files
+        const path = `${this.findRoot(zip)}/`
+        let tree = this.createTree(files, path, path, zip, 0)
+        this.setState({
+          tree: tree.children,
+          exploreModal: true,
+          projectName: `${meta.artifact}.zip`,
+          originalProject: blob,
+        })
+      })
+    })
+  }
+
+  download = () => {
+    const { originalProject, projectName } = this.state
+    FileSaver.saveAs(originalProject, projectName)
+  }
+
+  findRoot = zip => {
+    let root = Object.keys(zip.files).filter(filename => {
+      let pathArray = filename.split('/')
+      if (zip.files[filename].dir && pathArray.length === 2) {
+        return true
+      }
+      return false
+    })[0]
+    return root.substring(0, root.length - 1)
+  }
+
+  createTree = (files, path, fileName, zip, depth) => {
+    let type = files[path].dir ? 'folder' : 'file'
+    let children = []
+    zip.folder(path).forEach((relativePath, file) => {
+      let pathArray = relativePath.split('/')
+      if (pathArray.length === 1 || (file.dir && pathArray.length === 2)) {
+        children.push(
+          this.createTree(
+            files,
+            path + relativePath,
+            relativePath,
+            zip,
+            depth + 1
+          )
+        )
+      }
+    })
+    let branch = {
+      type: type,
+      filename:
+        type === 'folder'
+          ? fileName.substring(0, fileName.length - 1)
+          : fileName,
+      path: '/' + path,
+      hidden: depth === 1 && type === 'folder' ? true : null,
+      children: children,
+    }
+    if (type === 'file') {
+      files[path].async('string').then(content => {
+        branch.content = content
+        if (fileName === 'pom.xml') {
+          this.onSelectedFile(branch)
+        }
+      })
+    }
+    return branch
   }
 
   onSelectedFile = item => {
@@ -683,6 +758,8 @@ class IndexPage extends React.Component {
           onSelected={this.onSelectedFile}
           tree={get(this.state, 'tree')}
           selected={get(this.state, 'file')}
+          projectName={get(this.state, 'projectName')}
+          download={this.download}
         />
       </Layout>
     )

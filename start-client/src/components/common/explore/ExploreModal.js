@@ -1,3 +1,4 @@
+import FileSaver from 'file-saver'
 import Modal from 'react-responsive-modal'
 import PropTypes from 'prop-types'
 import React from 'react'
@@ -11,7 +12,6 @@ import { IconDownload, IconFile, IconTimes } from './../icons'
 class ExploreModal extends React.Component {
   constructor(props) {
     super(props)
-
     this.state = { selected: null }
   }
 
@@ -19,7 +19,10 @@ class ExploreModal extends React.Component {
     toast.success('Your file has been copied.')
   }
 
-  download = file => {
+  download = (file, event) => {
+    event.preventDefault()
+    let blob = new Blob([file.content], { type: 'text/plain;charset=utf-8' })
+    FileSaver.saveAs(blob, file.filename)
     toast.success('Your file has been downloaded.')
   }
 
@@ -28,7 +31,7 @@ class ExploreModal extends React.Component {
   }
 
   render() {
-    const { tree, selected } = this.props
+    const { tree, selected, projectName } = this.props
     if (tree) {
       return (
         <div>
@@ -42,7 +45,7 @@ class ExploreModal extends React.Component {
             <div className='colset'>
               <div className='left'>
                 <div className='head'>
-                  <strong>demo.zip</strong>
+                  <strong>{projectName}</strong>
                 </div>
                 <div className='content'>
                   <FileTree
@@ -52,7 +55,7 @@ class ExploreModal extends React.Component {
                   />
                 </div>
                 <div className='foot'>
-                  <span className='action'>
+                  <span onClick={this.props.download} className='action'>
                     <IconDownload />
                     Download the ZIP
                   </span>
@@ -67,13 +70,16 @@ class ExploreModal extends React.Component {
                         {get(selected, 'filename')}
                       </strong>
                       <div className='actions'>
-                        <span onClick={this.download} className='action'>
+                        <span
+                          onClick={event => this.download(selected, event)}
+                          className='action'
+                        >
                           Download
                         </span>
                         <span className='divider'>|</span>
                         <CopyToClipboard
                           onCopy={this.onCopy}
-                          text={get(this.state, 'selected.content', '')}
+                          text={get(selected, 'content', '')}
                         >
                           <span className='action'>Copy</span>
                         </CopyToClipboard>
@@ -102,7 +108,9 @@ ExploreModal.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   onSelected: PropTypes.func.isRequired,
+  download: PropTypes.func.isRequired,
   tree: PropTypes.array,
+  projectName: PropTypes.string,
   selected: PropTypes.object,
 }
 
