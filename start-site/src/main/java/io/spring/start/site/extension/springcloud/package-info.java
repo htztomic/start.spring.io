@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Contains necessary customizers and configurations for Spring Cloud
+ * Contains necessary customizers and configurations for Spring Cloud.
  */
 package io.spring.start.site.extension.springcloud;

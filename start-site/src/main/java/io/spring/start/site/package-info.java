@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 /**
- * Contains customizers and configurations for start.spring.io and the StartApplication to run the application.
+ * Contains customizers and configurations for start.spring.io and the StartApplication to
+ * run the application.
  */
 package io.spring.start.site;

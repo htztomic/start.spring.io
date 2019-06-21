@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 /**
- * Contains necessary customizers and configurations for specific settings on start.spring.io.
+ * Contains necessary customizers and configurations for specific settings on
+ * start.spring.io.
  */
 package io.spring.start.site.extension;

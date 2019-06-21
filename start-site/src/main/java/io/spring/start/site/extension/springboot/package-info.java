@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Contains necessary customizers and configurations for Spring Boot
+ * Contains necessary customizers and configurations for Spring Boot.
  */
 package io.spring.start.site.extension.springboot;
